@@ -1,0 +1,23 @@
+Revision history for Log-Dump
+
+0.06 2009/12/19
+  - added ::Functions
+
+0.05 2009/06/16
+  - renamed misleading ::Singleton to ::Class
+
+0.04 2009/06/16
+  - now logcolor actually colors logs even under MSWin32
+    (thanks to Win32::Console::ANSI)
+  - added ::Singleton for larger applications
+  - don't pollute the "main" namespace
+
+0.03 2008/12/21
+  - methods were not installed properly
+    when the module was loaded elsewhere
+
+0.02 2008/11/19
+  - added logcolor support (suggestion by Kazuhiro Osawa)
+
+0.01 2008/11/07
+  - initial release
