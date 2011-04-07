@@ -6,7 +6,7 @@ use Sub::Install qw( install_sub );
 use Scalar::Util qw( blessed );
 
 our $VERSION = '0.07';
-our @CARP_NOT;
+our @CARP_NOT = qw/Log::Dump Log::Dump::Class Log::Dump::Functions/;
 
 sub import {
   my $class = shift;

@@ -19,7 +19,7 @@ sub initialize {
   $class->capture( IO::Capture::Stderr->new );
 }
 
-sub log : Tests(2) {
+sub log : Tests(4) {
   my $class = shift;
 
   my $capture = $class->capture;
@@ -30,13 +30,16 @@ sub log : Tests(2) {
     $capture->start;
     $target->log( debug => 'message' );
     $capture->stop;
+    my $captured = join "\n", $capture->read;
 
-    like $capture->read => qr/\[debug\] message/,
+    like $captured => qr/\[debug\] message/,
          $class->message('captured');
+    unlike $captured => qr{Log.Dump(?!.Test)},
+         $class->message('not from Log::Dump');
   }
 }
 
-sub dump : Tests(2) {
+sub dump : Tests(4) {
   my $class = shift;
 
   my $capture = $class->capture;
@@ -47,15 +50,16 @@ sub dump : Tests(2) {
     $capture->start;
     $target->log( dump => ['message', 'array'] );
     $capture->stop;
+    my $captured = join "\n", $capture->read;
 
-    my $read = join "\n", $capture->read;
-
-    like $read => qr/\[dump\] \["message", "array"\]/,
+    like $captured => qr/\[dump\] \["message", "array"\]/,
          $class->message('captured');
+    unlike $captured => qr{Log.Dump(?!.Test)},
+         $class->message('not from Log::Dump');
   }
 }
 
-sub error : Tests(2) {
+sub error : Tests(4) {
   my $class = shift;
 
   my $capture = $class->capture;
@@ -66,13 +70,16 @@ sub error : Tests(2) {
     $capture->start;
     $target->log( error => 'message' );
     $capture->stop;
+    my $captured = $capture->read;
 
-    like $capture->read => qr/\[error\] message at/,
+    like $captured => qr/\[error\] message at/,
          $class->message('captured');
+    unlike $captured => qr{Log.Dump(?!.Test)},
+         $class->message('not from Log::Dump');
   }
 }
 
-sub fatal : Tests(2) {
+sub fatal : Tests(4) {
   my $class = shift;
 
   my $capture = $class->capture;
@@ -84,10 +91,12 @@ sub fatal : Tests(2) {
 
     like $@ => qr/\[fatal\] message at/,
          $class->message('captured');
+    unlike $@ => qr{Log.Dump(?!.Test)},
+         $class->message('not from Log::Dump');
   }
 }
 
-sub array : Tests(2) {
+sub array : Tests(4) {
   my $class = shift;
 
   my $capture = $class->capture;
@@ -98,11 +107,12 @@ sub array : Tests(2) {
     $capture->start;
     $target->log( array => 'message', 'array' );
     $capture->stop;
+    my $captured = join "\n", $capture->read;
 
-    my $read = join "\n", $capture->read;
-
-    like $read => qr/\[array\] messagearray/,
+    like $captured => qr/\[array\] messagearray/,
          $class->message('captured');
+    unlike $captured => qr{Log.Dump(?!.Test)},
+         $class->message('not from Log::Dump');
   }
 }
 
