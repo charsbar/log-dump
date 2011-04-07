@@ -30,6 +30,7 @@ t/lib/Log/Dump/Test/Child/Filter.pm
 t/lib/Log/Dump/Test/Child/Wrapped.pm
 t/lib/Log/Dump/Test/Class.pm
 t/lib/Log/Dump/Test/Class/Basic.pm
+t/lib/Log/Dump/Test/Class/Capture.pm
 t/lib/Log/Dump/Test/ClassLog.pm
 t/lib/Log/Dump/Test/ClassUserA.pm
 t/lib/Log/Dump/Test/ClassUserB.pm
