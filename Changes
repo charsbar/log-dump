@@ -1,5 +1,9 @@
 Revision history for Log-Dump
 
+0.09 2011/04/07
+  - oops, forgot to update MANIFEST
+  - no code changes
+
 0.08 2011/04/07
   - fixed CARP_NOT handling
 
