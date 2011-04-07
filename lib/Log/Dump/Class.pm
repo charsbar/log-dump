@@ -5,6 +5,8 @@ use warnings;
 use Log::Dump;
 use Sub::Install 'install_sub';
 
+our @CARP_NOT;
+
 sub import {
   my $class = shift;
   my $caller = caller;
