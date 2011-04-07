@@ -1,5 +1,8 @@
 Revision history for Log-Dump
 
+0.07 2011/04/07
+  - use CARP_NOT
+
 0.06 2009/12/19
   - added ::Functions
 

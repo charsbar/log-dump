@@ -5,7 +5,7 @@ use warnings;
 use Sub::Install qw( install_sub );
 use Scalar::Util qw( blessed );
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 our @CARP_NOT;
 
 sub import {
