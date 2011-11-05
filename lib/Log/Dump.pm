@@ -41,7 +41,18 @@ sub logger {
 sub logfilter {
   my $self = shift;
 
-  my $filter = @_ && $_[0] ? [@_] : undef;
+  my $filter = undef;
+  if (@_ && $_[0]) {
+    $filter = {pos => [], neg => []};
+    for (@_) {
+      if (substr($_, 0, 1) eq '!') {
+        push @{$filter->{neg}}, substr($_, 1);
+      }
+      else {
+        push @{$filter->{pos}}, $_;
+      }
+    }
+  }
 
   if ( blessed $self ) {
     @_ ? $self->{_logfilter} = $filter : $self->{_logfilter};
@@ -124,7 +135,14 @@ sub log {
   else {
     my $label = shift;
 
-    return if $self->logfilter and !grep { $label eq $_ } @{ $self->logfilter };
+    if ($self->logfilter) {
+      if (my @neg = @{ $self->logfilter->{neg} }) {
+        return if grep { $label eq $_ } @neg;
+      }
+      if (my @pos = @{ $self->logfilter->{pos} }) {
+        return if !grep { $label eq $_ } @pos;
+      }
+    }
 
     require Data::Dump;
     my $msg = join '', map { ref $_ ? Data::Dump::dump($_) : $_ } @_;
