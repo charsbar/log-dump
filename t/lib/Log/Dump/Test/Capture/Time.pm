@@ -55,7 +55,7 @@ sub time : Tests(8) {
     $target->log( time => 'message' );
     $capture->stop;
 
-    my $with_time = $capture->read;
+    $with_time = $capture->read;
     like $with_time => qr/^\d{4}\-\d{2}\-\d{2} \[time\] message/,
          $class->message('captured');
     $target->logtime(0); # no more time
