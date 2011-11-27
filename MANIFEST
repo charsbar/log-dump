@@ -20,6 +20,7 @@ t/lib/Log/Dump/Test/Capture/Colored.pm
 t/lib/Log/Dump/Test/Capture/Disable.pm
 t/lib/Log/Dump/Test/Capture/File.pm
 t/lib/Log/Dump/Test/Capture/Filter.pm
+t/lib/Log/Dump/Test/Capture/Time.pm
 t/lib/Log/Dump/Test/Capture/Wrapped.pm
 t/lib/Log/Dump/Test/Child.pm
 t/lib/Log/Dump/Test/Child/Basic.pm
