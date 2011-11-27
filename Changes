@@ -1,5 +1,8 @@
 Revision history for Log-Dump
 
+0.11 2011/11/27
+  - added logtime
+
 0.10 2011/11/05
   - logfilter now recognizes !label and hides logs with the label.
 
