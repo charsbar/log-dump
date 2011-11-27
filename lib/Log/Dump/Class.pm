@@ -13,7 +13,7 @@ sub import {
 
   return if $caller eq 'main';
 
-  my @methods = qw( logger log logfile logfilter logcolor );
+  my @methods = qw( logger log logfile logfilter logcolor logtime );
   foreach my $method (@methods) {
     install_sub({
       as   => $method,

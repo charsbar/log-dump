@@ -14,7 +14,7 @@ sub import {
 
   return if $caller eq 'main';
 
-  my @methods = qw/logger logfilter logfile logcolor log/;
+  my @methods = qw/logger logfilter logfile logcolor logtime log/;
   for my $method (@methods) {
     install_sub({
       as   => $method,
@@ -90,6 +90,33 @@ sub logfile {
   }
 }
 
+sub logtime {
+  my $self = shift;
+
+  my $logtime_ref;
+  if ( blessed $self ) {
+    $logtime_ref = \($self->{_logtime});
+    }
+  else {
+    no strict 'refs';
+    $logtime_ref = \(${"$self\::_logtime"});
+  }
+
+  if ( @_ && $_[0] ) {
+    eval { require Time::Piece };
+    return $$logtime_ref = undef if $@;
+
+    my $format = $_[0] =~ /%/ ? $_[0] : '%Y-%m-%d %H:%M:%S';
+    $$logtime_ref = sub { Time::Piece->new(shift)->strftime($format) };
+  }
+  elsif ( @_ && !$_[0] ) {
+    $$logtime_ref = undef;
+  }
+  else {
+    $$logtime_ref;
+  }
+}
+
 sub logcolor {
   my $self = shift;
 
@@ -151,19 +178,23 @@ sub log {
       eval { $colored_msg = Term::ANSIColor::colored($msg, $color) };
       $colored_msg = $msg if $@;
     }
+    my $time = '';
+    if (my $func = $self->logtime) {
+      $time = $func->(time) . " ";
+    }
 
     if ( $label eq 'fatal' ) {
       require Carp;
-      Carp::croak "[$label] $colored_msg";
+      Carp::croak $time."[$label] $colored_msg";
     }
     elsif ( $label eq 'error' or $label eq 'warn' ) {
       require Carp;
-      Carp::carp "[$label] $colored_msg";
-      $self->logfile->print(Carp::shortmess("[$label] $msg"), "\n") if $self->logfile;
+      Carp::carp $time."[$label] $colored_msg";
+      $self->logfile->print(Carp::shortmess($time."[$label] $msg"), "\n") if $self->logfile;
     }
     else {
-      print STDERR "[$label] $colored_msg\n";
-      $self->logfile->print("[$label] $msg\n") if $self->logfile;
+      print STDERR $time."[$label] $colored_msg\n";
+      $self->logfile->print($time."[$label] $msg\n") if $self->logfile;
     }
   }
 }
@@ -214,6 +245,11 @@ Log::Dump - simple logger mainly for debugging
       $self->logcolor(0);  # no color
     }
 
+    # you can log with timestamp
+    __PACKAGE__->logtime(1);
+    $self->log( $ENV{REMOTE_ADDR} => 'foo' );
+    __PACKAGE__->logtime(0); # hide timestamp
+
     # you can turn off the logging; set to true to turn on.
     __PACKAGE__->logger(0);
 
@@ -222,7 +258,7 @@ Log::Dump - simple logger mainly for debugging
 
 =head1 DESCRIPTION
 
-L<Log::Dump> is a simple logger mix-in mainly for debugging. This installs five methods into a caller (the class that C<use>d L<Log::Dump>) via L<Sub::Install>. The point is you don't need to load extra dumper modules or you don't need to concatenate messages. Just log things and they will be dumped (and concatenated if necessary) to stderr, and to a file if you prefer. Also, you can use these logging methods as class methods or object methods (though usually you don't want to mix them, especially when you're doing something special).
+L<Log::Dump> is a simple logger mix-in mainly for debugging. This installs six methods into a caller (the class that C<use>d L<Log::Dump>) via L<Sub::Install>. The point is you don't need to load extra dumper modules or you don't need to concatenate messages. Just log things and they will be dumped (and concatenated if necessary) to stderr, and to a file if you prefer. Also, you can use these logging methods as class methods or object methods (though usually you don't want to mix them, especially when you're doing something special).
 
 =head1 METHODS
 
@@ -253,6 +289,10 @@ If you want to log to a file, set a file name, and an optional open mode for L<I
 =head2 logcolor
 
 If you want to color logs to stderr, provide a label and its color specification (actually a hash of them) to C<logcolor>. Then, log will be colored (if L<Term::ANSIColor> is installed and your terminal supports the specification). If you set a false scalar, coloring will be disabled. See L<Term::ANSIColor> for color specifications.
+
+=head2 logtime
+
+If you set this to true, timestamp will be prepended. You can pass a strftime format if you need finer control. Set a false value to disable this timestamp.
 
 =head1 AUTHOR
 

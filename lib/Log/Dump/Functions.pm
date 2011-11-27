@@ -11,7 +11,7 @@ sub import {
   my $class = shift;
   my $caller = caller;
 
-  my @methods = qw( logger log logfile logfilter logcolor );
+  my @methods = qw( logger log logfile logfilter logcolor logtime );
   foreach my $method (@methods) {
     install_sub({
       as   => $method,
