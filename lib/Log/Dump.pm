@@ -28,7 +28,6 @@ sub logger {
   my $self = shift;
 
   my $logger = $_[0];
-    $logger = undef if $logger and $logger !~ /^[A-Z]/;
   if ( blessed $self ) {
     @_ ? $self->{_logger} = $logger : $self->{_logger};
   }
@@ -156,7 +155,7 @@ sub log {
   if ( defined $logger and !$logger ) {
     return;
   }
-  elsif ( $logger and $logger->can('log') ) {
+  elsif ( $logger and $logger =~ /^[A-Za-z]/ && $logger->can('log') ) {
     $logger->log(@_);
   }
   else {

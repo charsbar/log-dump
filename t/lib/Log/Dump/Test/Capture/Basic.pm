@@ -116,4 +116,111 @@ sub array : Tests(4) {
   }
 }
 
+sub logger : Tests(14) {
+  my $class = shift;
+
+  my $capture = $class->capture;
+  my $package = $class->package;
+  my $object  = $package->new;
+
+  foreach my $target ( $package, $object ) {
+    $capture->start;
+    $target->log( debug => 'message' );
+    $capture->stop;
+    my $captured = join "\n", $capture->read;
+
+    like $captured => qr/\[debug\] message/,
+         $class->message('captured');
+    unlike $captured => qr{Log.Dump(?!.Test)},
+         $class->message('not from Log::Dump');
+
+    $target->logger(0);
+    is $target->logger => 0, $class->message('logger value is correct');
+
+    $capture->start;
+    $target->log( debug => 'logger is disabled' );
+    $capture->stop;
+    $captured = join "\n", $capture->read;
+
+    ok !$captured, $class->message('logger is disabled');
+
+    $target->logger(1);
+    is $target->logger => 1, $class->message('logger value is correct');
+
+    $capture->start;
+    $target->log( debug => 'logger is enabled' );
+    $capture->stop;
+    $captured = join "\n", $capture->read;
+
+    like $captured => qr/\[debug\] logger is enabled/,
+         $class->message('captured');
+    unlike $captured => qr{Log.Dump(?!.Test)},
+         $class->message('not from Log::Dump');
+  }
+}
+
+sub custom_logger : Tests(18) {
+  my $class = shift;
+
+  my $capture = $class->capture;
+  my $package = $class->package;
+  my $object  = $package->new;
+
+  foreach my $target ( $package, $object ) {
+    $capture->start;
+    $target->log( debug => 'message' );
+    $capture->stop;
+    my $captured = join "\n", $capture->read;
+
+    like $captured => qr/\[debug\] message/,
+         $class->message('captured');
+    unlike $captured => qr{Log.Dump(?!.Test)},
+         $class->message('not from Log::Dump');
+
+    $target->logger(0);
+    is $target->logger => 0, $class->message('logger value is correct');
+
+    $capture->start;
+    $target->log( debug => 'logger is disabled' );
+    $capture->stop;
+    $captured = join "\n", $capture->read;
+
+    ok !$captured, $class->message('logger is disabled');
+
+    $target->logger('Log::Dump::Test::CustomLogger');
+    is $target->logger => 'Log::Dump::Test::CustomLogger', $class->message('logger value is correct');
+
+    $capture->start;
+    $target->log( debug => 'custom logger is enabled' );
+    $capture->stop;
+    $captured = join "\n", $capture->read;
+
+    like $captured => qr/debug custom logger is enabled/,
+         $class->message('captured');
+    unlike $captured => qr{Log.Dump(?!.Test)},
+         $class->message('not from Log::Dump');
+
+    my $logger_object = Log::Dump::Test::CustomLogger->new;
+    $target->logger($logger_object);
+
+    $capture->start;
+    $target->log( debug => 'custom logger object is enabled' );
+    $capture->stop;
+    $captured = join "\n", $capture->read;
+
+    like $captured => qr/debug custom logger object is enabled/,
+         $class->message('captured');
+    unlike $captured => qr{Log.Dump(?!.Test)},
+         $class->message('not from Log::Dump');
+
+    $target->logger(1);  # back to the default
+  }
+}
+
+package #
+  Log::Dump::Test::CustomLogger;
+
+sub new { bless {}, shift }
+sub log { shift; print STDERR join ' ', @_ }
+
 1;
