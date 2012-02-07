@@ -5,7 +5,7 @@ use warnings;
 use Sub::Install qw( install_sub );
 use Scalar::Util qw( blessed );
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 our @CARP_NOT = qw/Log::Dump Log::Dump::Class Log::Dump::Functions/;
 
 sub import {
