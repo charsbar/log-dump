@@ -1,5 +1,8 @@
 Revision history for Log-Dump
 
+0.13 2012/02/12
+  - fixed tests to initialize properly
+
 0.12 2012/02/08
   - fixed logger to keep a correct value
 
