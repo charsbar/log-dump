@@ -49,6 +49,9 @@ sub user_object_has : Tests(5) {
 sub class_logger : Tests(6) {
   my $class = shift;
 
+  Log::Dump::Test::ClassUserA->logger(undef);
+  Log::Dump::Test::ClassUserB->logger(undef);
+
   ok(!defined Log::Dump::Test::ClassUserA->logger,
      $class->message('logger for user A is not defined'));
 
