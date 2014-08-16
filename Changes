@@ -1,5 +1,10 @@
 Revision history for Log-Dump
 
+0.14 2014/08/16
+  - no code changes
+  - dropped Test::Classy dependency
+  - cpanfile
+
 0.13 2012/02/12
   - fixed tests to initialize properly
 
