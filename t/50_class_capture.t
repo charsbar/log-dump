@@ -3,7 +3,7 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 use Test::More;
-use Log::Dump::Functions;
+use Log::Dump::Test::ClassUserA;
 
 BEGIN {
   eval { require IO::Capture::Stderr; 1 }
@@ -12,31 +12,33 @@ BEGIN {
 
 my $capture = IO::Capture::Stderr->new;
 
+Log::Dump::Test::ClassUserA->logger(1);
+
 subtest 'plain_usage' => sub {
   $capture->start;
-  log( debug => 'message' );
+  Log::Dump::Test::ClassUserA->log( debug => 'message' );
   $capture->stop;
   my $captured = join "\n", $capture->read;
 
   like $captured => qr/\[debug\] message/, 'captured';
-  unlike $captured => qr{Log.Dump.Functions}, 'not from Log::Dump::Functions';
+  unlike $captured => qr{Log.Dump.Class}, 'not from Log::Dump::Class';
 };
 
 subtest 'error' => sub {
   $capture->start;
-  log( error => 'message' );
+  Log::Dump::Test::ClassUserA->log( error => 'message' );
   $capture->stop;
   my $captured = join "\n", $capture->read;
 
   like $captured => qr/\[error\] message/, 'captured';
-  unlike $captured => qr{Log.Dump.Functions}, 'not from Log::Dump::Functions';
+  unlike $captured => qr{Log.Dump.Class}, 'not from Log::Dump::Class';
 };
 
 subtest 'fatal' => sub {
-  eval { log( fatal => 'message' ) };
+  eval { Log::Dump::Test::ClassUserA->log( fatal => 'message' ) };
 
   like $@ => qr/\[fatal\] message/, 'captured';
-  unlike $@ => qr{Log.Dump.Functions}, 'not from Log::Dump::Functions';
+  unlike $@ => qr{Log.Dump.Class}, 'not from Log::Dump::Class';
 };
 
 done_testing;
