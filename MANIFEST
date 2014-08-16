@@ -1,4 +1,5 @@
 Changes
+cpanfile
 lib/Log/Dump.pm
 lib/Log/Dump/Class.pm
 lib/Log/Dump/Functions.pm
